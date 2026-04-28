@@ -1,0 +1,12 @@
+env
+.env/
+uploads/temp/
+static/processed/
+__pychace__/
+*.pyc
+*.log
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

@@ -1,0 +1,9 @@
+fastapi[standard]
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+celery[redis]
+redis
+pillow
+httpx
