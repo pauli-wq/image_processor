@@ -1,9 +1,10 @@
 import logging
+from pathlib import Path
 import os
 import uuid
 from fastapi import APIRouter, HTTPException, UploadFile, status
 from app.celery_app import celery_app
-from app.config.config import settings
+from app.core.config import settings
 from app.schemas.schemas import TaskResult, TaskStatus, UploadResponse
 from app.tasks.image_processing import process_image_task
 
@@ -28,7 +29,7 @@ async def upload_image(file: UploadFile):
     
     # leemos chunk por chunk para no saturar la RAM
     temp_filename = f"{uuid.uuid4().hex}.{ext}"
-    temp_path = settings.UPLOAD_DIR / temp_filename
+    temp_path = Path(settings.UPLOAD_DIR) / temp_filename
     
     try:
         file_size = 0
@@ -45,9 +46,9 @@ async def upload_image(file: UploadFile):
     
     # enviamos a Celery
     task = process_image_task.delay(
-        temp_path=str(temp_path),
+        temp_path=str(temp_path.resolve()),
         output_dir=str(settings.PROCESSED_DIR),
-        temp_filename=temp_filename,
+        filename=temp_filename,
         size=(300, 300),
         filter_type=None
     )
@@ -71,8 +72,12 @@ async def get_result(task_id: str):
         return TaskResult(
             task_id=task_id,
             status="SUCCESS",
-            processed_url=f"{settings.STATIC_URL}/{result['filname']}"
+            processed_url=f"{settings.STATIC_URL}/{result['filename']}"
         )
     elif res.status == "FAILURE":
         return TaskResult(task_id=task_id, status="FAILURE", error=str(res.result))
-    return TaskResult(task_id=task_id, status=res.status) 
+    return TaskResult(
+            task_id=task_id, 
+            status=res.status,
+            processed_url=None,
+        ) 

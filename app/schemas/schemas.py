@@ -15,5 +15,5 @@ class TaskStatus(BaseModel):
 class TaskResult(BaseModel):
     task_id: str
     status: str
-    processed_url: str
-    erro: str | None = None
+    processed_url: str | None = None
+    error: str | None = None
