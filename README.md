@@ -71,12 +71,14 @@ Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso
   ```
 
 Posibles valores de `status`:
+
+|Estado| 
 |-------------------------------------------------------|
 |`PENDING`| La tarea está en cola, aún no se ha iniciado|
 |`STARTED`| El worker ha comenzado a procesar la imagen|
 |`SUCCESS`| El procesamiento se completó exitosamente|
 |`FAILURE`| Ocurrió un error|
-|-------------------------------------------------------|
+
 
 #### `GET /result/{task_id}`
 Devuelve el resultado final de la tarea. Incluye la URL de la imagen procesada cuando el estado es `SUCCESS`.
