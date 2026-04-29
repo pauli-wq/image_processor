@@ -3,7 +3,7 @@ import os
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, HTTPException, Query, UploadFile, status
 
 from app.celery_app import celery_app
 from app.core.config import settings
@@ -19,7 +19,14 @@ ALLOWED_MINE = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 @router.post(
     "/upload", response_model=UploadResponse, status_code=status.HTTP_202_ACCEPTED
 )
-async def upload_image(file: UploadFile):
+async def upload_image(
+    file: UploadFile,
+    filter_type: str | None = Query(
+        default=None,
+        description="Filter to Apply:BLUR, SHARPEN, CONTOUR",
+        pattern="^(BLUR|SHARPEN|CONTOUR)$",
+    ),
+):
     # validar tipo MIME y extension
     content_type = file.content_type
     if content_type not in ALLOWED_MINE:
@@ -52,7 +59,7 @@ async def upload_image(file: UploadFile):
         output_dir=str(settings.PROCESSED_DIR),
         filename=temp_filename,
         size=(300, 300),
-        filter_type=None,
+        filter_type=filter_type,
     )
 
     return UploadResponse(task_id=task.id)
@@ -80,9 +87,8 @@ async def get_result(task_id: str):
         )
     elif res.status == "FAILURE":
         return TaskResult(
-            task_id=clean_task_id, 
-            status="FAILURE", 
-            error=str(res.result))
+            task_id=clean_task_id, status="FAILURE", error=str(res.result)
+        )
     return TaskResult(
         task_id=clean_task_id,
         status=res.status,
