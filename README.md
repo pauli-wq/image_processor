@@ -1,4 +1,4 @@
-# 🖼️ Image Processor API
+# 🖼️ Image Processor
 
 API REST asíncrona para la subida y procesamiento de imágenes en segundo plano, 
 construida con **FastAPI** y **Celery**. Permite redimensionar imágenes y aplicar filtros 
