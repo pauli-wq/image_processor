@@ -16,7 +16,7 @@ construida con **FastAPI** y **Celery**. Permite redimensionar imágenes y aplic
 
 ## 📦 Stack Tecnológico
 
-| Componente       | Tecnología                |
+|Componente        | Tecnología                |
 | ---------------- | ------------------------- |
 | Framework        | FastAPI                   |
 | Cola de tareas   | Celery                    |
@@ -52,7 +52,7 @@ Necesitas dos procesos: el servidor web y el worker de Celery.
 
 # 📡 Endpoints 
 
-`POST /upload`
+#### `POST /upload` 
 Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso.
   ```json
   {
@@ -61,7 +61,7 @@ Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso
   }
   ```
 
-`GET /status/{task_id}`
+#### `GET /status/{task_id}`
   Devuelve el estado actual de la tarea.
   ```json
   {
@@ -71,13 +71,14 @@ Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso
   ```
 
 Posibles valores de `status`:
+|-------------------------------------------------------|
+|`PENDING`| La tarea está en cola, aún no se ha iniciado|
+|`STARTED`| El worker ha comenzado a procesar la imagen|
+|`SUCCESS`| El procesamiento se completó exitosamente|
+|`FAILURE`| Ocurrió un error|
+|-------------------------------------------------------|
 
-|`PENDING`: La tarea está en cola, aún no se ha iniciado|
-|`STARTED`: El worker ha comenzado a procesar la imagen|
-|`SUCCESS`: El procesamiento se completó exitosamente|
-|`FAILURE`: Ocurrió un error|
-
- `GET /result/{task_id}`
+#### `GET /result/{task_id}`
 Devuelve el resultado final de la tarea. Incluye la URL de la imagen procesada cuando el estado es `SUCCESS`.
 
 - `SUCCESS`:
