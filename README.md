@@ -113,5 +113,5 @@ Devuelve el resultado final de la tarea. Incluye la URL de la imagen procesada c
     }
   ```
 
-# 🤝 Contribuciones
-*Las contribuciones son bienvenidas.*
+#### 🤝 *Las contribuciones son bienvenidas*
+
