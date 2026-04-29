@@ -50,15 +50,67 @@ Necesitas dos procesos: el servidor web y el worker de Celery.
   celery -A app.celery_app worker --loglevel=info
   ```
 
-## 📡 Referencia de la API
+# 📡 Endpoints 
 
-| Método | Endpoint            | Descripción                                                                 | Parámetros / Body                                     | Respuesta exitosa (ejemplo)                                                                                                                                                                                                                                                                                  |
-|--------|---------------------|-----------------------------------------------------------------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `POST` | `/upload`           | Sube una imagen para procesar en segundo plano.                             | **Form-data**<br>`file`: archivo de imagen (JPEG, PNG, WebP o GIF) | **202 Accepted**<br>```json<br>{<br>  "task_id": "a1b2c3d4e5f6789012345678",<br>  "message": "Image sent to processing queue"<br>}<br>```                                                                                                                             |
-| `GET`  | `/status/{task_id}` | Consulta el estado actual de una tarea de procesamiento.                    | **Path**<br>`task_id`: UUID de la tarea               | **200 OK**<br>```json<br>{<br>  "task_id": "a1b2c3d4e5f6789012345678",<br>  "status": "PENDING"<br>}<br>```<br><br>Posibles valores de `status`: `PENDING`, `STARTED`, `SUCCESS`, `FAILURE`. Si `status` es `FAILURE`, se incluye el campo `error`.                                                   |
-| `GET`  | `/result/{task_id}` | Obtiene el resultado final del procesamiento, incluyendo la URL de la imagen procesada. | **Path**<br>`task_id`: UUID de la tarea               | **200 OK** (éxito)<br>```json<br>{<br>  "task_id": "a1b2c3d4e5f6789012345678",<br>  "status": "SUCCESS",<br>  "processed_url": "/static/processed/a1b2c3d4e5f6789012345678.jpg",<br>  "error": null<br>}<br>```<br><br>**200 OK** (fallo)<br>```json<br>{<br>  "task_id": "a1b2c3d4e5f6789012345678",<br>  "status": "FAILURE",<br>  "processed_url": null,<br>  "error": "FileNotFoundError: ..."<br>}<br>``` |
+## `POST /upload`
+Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso.
+  ```json
+  {
+    "task_id": "a1b2c3d4e5f6789012345678",
+    "message": "Image sent to processing queue"
+  }
+  ```
 
-> **Notas sobre errores comunes**  
-> - `413` – El archivo excede el tamaño máximo permitido.  
-> - `415` – Tipo de archivo no soportado.  
-> - `500` – Error interno del servidor.
+## `GET /status/{task_id}`
+  Devuelve el estado actual de la tarea.
+  ```json
+  {
+    "task_id": "a1b2c3d4e5f6789012345678",
+    "status": "PENDING"
+  }
+  ```
+
+Posibles valores de `status`:
+
+|**Estado**|
+|-------------------------------------------------------|
+|`PENDING`: La tarea está en cola, aún no se ha iniciado|
+|`STARTED`: El worker ha comenzado a procesar la imagen|
+|`SUCCESS`: El procesamiento se completó exitosamente|
+|`FAILURE`: Ocurrió un error|
+
+## `GET /result/{task_id}`
+Devuelve el resultado final de la tarea. Incluye la URL de la imagen procesada cuando el estado es `SUCCESS`.
+
+- `SUCCESS`:
+  ```json
+  {
+    "task_id": "a1b2c3d4e5f6789012345678",
+    "status": "SUCCESS",
+    "processed_url": "/static/processed/a1b2c3d4e5f6789012345678.jpg",
+    "error": null
+  }
+  ```
+  
+- `FAILURE`:
+  ```json
+  {
+    "task_id": "a1b2c3d4e5f6789012345678",
+    "status": "FAILURE",
+    "processed_url": null,
+    "error": "FileNotFoundError: El archivo temporal no existe"
+  }
+  ```
+
+- `STARTED`:
+  ```json
+    {
+      "task_id": "a1b2c3d4e5f6789012345678",
+      "status": "STARTED",
+      "processed_url": null,
+      "error": null  
+    }
+  ```
+
+# 🤝 Contribuciones
+*Las contribuciones son bienvenidas.*
