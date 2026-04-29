@@ -14,7 +14,7 @@ construida con **FastAPI** y **Celery**. Permite redimensionar imágenes y aplic
 - **Validación** de tipo MIME, extensión y tamaño máximo de archivo.
 - **Limpieza automática** de archivos temporales tras el éxito o fallo.
 
-## 📦 Stack Tecnológico
+## 📦 Stack 
 
 |Componente        | Tecnología                |
 | ---------------- | ------------------------- |
@@ -72,12 +72,12 @@ Sube una imagen para ser procesada y devuelve un task_id para seguir el progreso
 
 Posibles valores de `status`:
 
-|Estado|  | Descripción |
-|---------|---------------------------------------------|
-|`PENDING`| La tarea está en cola, aún no se ha iniciado|
-|`STARTED`| El worker ha comenzado a procesar la imagen|
-|`SUCCESS`| El procesamiento se completó exitosamente|
-|`FAILURE`| Ocurrió un error|
+|Estado|  
+|------------------------------------------------------|
+|`PENDING` La tarea está en cola, aún no se ha iniciado|
+|`STARTED` El worker ha comenzado a procesar la imagen|
+|`SUCCESS` El procesamiento se completó exitosamente|
+|`FAILURE` Ocurrió un error|
 
 
 #### `GET /result/{task_id}`
