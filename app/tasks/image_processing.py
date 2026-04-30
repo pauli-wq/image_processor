@@ -19,7 +19,7 @@ def process_image_task(
     size: tuple,
     filter_type: str = None,
 ):
-    logger.info(f"Iniciando procesamiento de {filename}")
+    logger.info(f"Initiating processing of {filename}")
 
     # Convertir a objetos Path para manejar rutas de forma segura
     p_temp = Path(temp_path)
@@ -27,9 +27,9 @@ def process_image_task(
 
     try:
         if not p_temp.exists():
-            raise FileNotFoundError(f"El archivo temporal no existe: {temp_path}")
+            raise FileNotFoundError(f"The temporary file does not exist: {temp_path}")
         with Image.open(p_temp) as img:
-            logger.info(f"Imagen abierta: {img.format}, {img.size}, {img.mode}")
+            logger.info(f"Open image: {img.format}, {img.size}, {img.mode}")
             if img.mode in ("RGBA", "LA", "P"):
                 img = img.convert("RGB")
 
@@ -49,7 +49,7 @@ def process_image_task(
 
             out_path = p_output / filename
             img.save(out_path, quality=85, optimize=True)
-            logger.info(f"Imagen guardada en: {out_path}")
+            logger.info(f"Image saved in: {out_path}")
 
             if p_temp.exists():
                 p_temp.unlink()
@@ -57,7 +57,7 @@ def process_image_task(
             return {"filename": filename, "status": "success"}
 
     except Exception as exc:
-        logger.error(f"Error procesando {filename}: {exc}")
+        logger.error(f"Error processing {filename}: {exc}")
 
         if p_temp.exists():
             try:
