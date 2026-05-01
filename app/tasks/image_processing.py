@@ -1,14 +1,10 @@
 import logging
-import os
 from pathlib import Path
 
 from PIL import Image, ImageFilter
-
 from app.celery_app import celery_app
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-
 
 @celery_app.task(bind=True, max_retries=3, default_retry_delay=10)
 def process_image_task(
